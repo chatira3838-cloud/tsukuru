@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tsukuru — Turn Your Art Into Collectibles Fans Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Poppins:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --lavender:#C9B6FF;
+    --lavender-deep:#A98BFF;
+    --pink:#FFD6E7;
+    --mist:#F6F4FB;
+    --paper:#FBFAFC;
+    --card:#FFFFFF;
+    --gray:#8E8E93;
+    --gray-ink:#6B6B72;
+    --ink:#1A1A1F;
+    --line:#ECEAF3;
+    --radius-lg:28px;
+    --radius-md:18px;
+    --radius-sm:12px;
+    --shadow-soft:0 20px 60px -20px rgba(26,26,31,0.18);
+    --shadow-btn:0 10px 24px -8px rgba(169,139,255,0.55);
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Poppins', 'Segoe UI', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img,svg{display:block; max-width:100%;}
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  button{font-family:inherit; border:none; background:none; cursor:pointer;}
+  .wrap{max-width:1240px; margin:0 auto; padding:0 32px;}
+  section{position:relative;}
+
+  ::selection{background:var(--lavender); color:var(--ink);}
+
+  [data-reveal]{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .8s var(--ease), transform .8s var(--ease);
+  }
+  [data-reveal].is-visible{opacity:1; transform:translateY(0);}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:15px 28px;
+    border-radius:100px;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    overflow:hidden;
+    isolation:isolate;
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+    white-space:nowrap;
+  }
+  .btn:active{transform:scale(.96);}
+
+  .btn-primary{
+    background:linear-gradient(135deg, var(--ink) 0%, #2b2b34 100%);
+    color:#fff;
+    box-shadow:0 14px 30px -12px rgba(26,26,31,0.5);
+  }
+  .btn-primary::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg, transparent 30%, rgba(201,182,255,.55) 50%, transparent 70%);
+    transform:translateX(-120%);
+    transition:transform .7s var(--ease);
+    z-index:1;
+  }
+  .btn-primary span{position:relative; z-index:2; display:inline-flex; align-items:center; gap:8px;}
+  .btn-primary:hover{transform:translateY(-3px); box-shadow:0 18px 36px -10px rgba(169,139,255,.55);}
+  .btn-primary:hover::before{transform:translateX(120%);}
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--ink);
+    border:1.5px solid var(--line);
+  }
+  .btn-ghost:hover{
+    border-color:var(--ink);
+    transform:translateY(-3px);
+    box-shadow:0 12px 24px -14px rgba(26,26,31,.35);
+  }
+  .btn-ghost .play-dot{
+    width:26px; height:26px; border-radius:50%;
+    background:var(--mist);
+    display:inline-flex; align-items:center; justify-content:center;
+    transition:background .3s var(--ease), transform .3s var(--ease);
+  }
+  .btn-ghost:hover .play-dot{background:var(--lavender); transform:scale(1.1);}
+
+  .btn-light{
+    background:#fff; color:var(--ink);
+    box-shadow:0 10px 24px -10px rgba(26,26,31,.25);
+  }
+  .btn-light:hover{transform:translateY(-3px) scale(1.02); box-shadow:0 16px 30px -8px rgba(26,26,31,.3);}
+
+  .btn-dark-on-light{
+    background:var(--ink); color:#fff;
+  }
+  .btn-dark-on-light:hover{transform:translateY(-3px); box-shadow:0 16px 30px -10px rgba(26,26,31,.4);}
+
+  /* ---------- Nav ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(251,250,252,0.78);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px;
+    max-width:1240px; margin:0 auto;
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark{
+    width:38px; height:38px; border-radius:11px;
+    background:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .brand-mark svg{width:20px; height:20px;}
+  .brand-spark{
+    position:absolute; top:-6px; right:-6px;
+    width:14px; height:14px;
+  }
+  .brand-name{font-weight:700; font-size:19px; letter-spacing:-0.02em;}
+
+  .nav-links{display:flex; align-items:center; gap:36px;}
+  .nav-links a{
+    font-size:14.5px; font-weight:500; color:var(--ink);
+    position:relative; padding:4px 0;
+  }
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:-2px;
+    width:0; height:2px; background:var(--lavender-deep);
+    transition:width .3s var(--ease);
+  }
+  .nav-links a:hover::after{width:100%;}
+
+  .nav-actions{display:flex; align-items:center; gap:18px;}
+  .nav-login{font-size:14.5px; font-weight:500;}
+  .nav-login:hover{color:var(--lavender-deep);}
+  .btn-sm{padding:11px 22px; font-size:14px;}
+
+  .hamburger{
+    display:none; flex-direction:column; gap:5px; width:26px; cursor:pointer; background:none; border:none;
+  }
+  .hamburger span{width:100%; height:2px; background:var(--ink); border-radius:2px; transition:.3s var(--ease);}
+  .mobile-menu{
+    display:none; flex-direction:column; gap:0;
+    background:var(--card); border-bottom:1px solid var(--line);
+    overflow:hidden; max-height:0; transition:max-height .4s var(--ease);
+  }
+  .mobile-menu a, .mobile-menu .mm-row{
+    padding:16px 32px; font-weight:500; border-top:1px solid var(--line);
+  }
+  .mobile-menu.open{max-height:420px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:88px 0 60px;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(255,214,231,.55), transparent 55%),
+      radial-gradient(circle at 15% 90%, rgba(201,182,255,.4), transparent 50%);
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#fff; border:1px solid var(--line);
+    padding:8px 16px; border-radius:100px;
+    font-size:13px; font-weight:500; color:var(--gray-ink);
+    box-shadow:0 6px 18px -12px rgba(26,26,31,.2);
+    margin-bottom:26px;
+  }
+  .eyebrow .dot{color:var(--lavender-deep); font-size:14px;}
+
+  .hero h1{
+    font-size:clamp(2.4rem, 4.2vw, 3.7rem);
+    line-height:1.08;
+    font-weight:700;
+    letter-spacing:-0.025em;
+    margin-bottom:22px;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(100deg, var(--lavender-deep), #E8A8CB 70%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.lead{
+    font-size:17px; line-height:1.6; color:var(--gray-ink); max-width:460px; margin-bottom:36px;
+  }
+  .hero-ctas{display:flex; gap:14px; margin-bottom:52px; flex-wrap:wrap;}
+
+  .trust-row{display:flex; gap:36px; flex-wrap:wrap;}
+  .trust-item{display:flex; flex-direction:column; align-items:flex-start; gap:8px;}
+  .trust-item .icon{
+    width:38px; height:38px; border-radius:11px; background:#fff; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .trust-item span{font-size:12.5px; color:var(--gray-ink); font-weight:500;}
+
+  /* Hero visual */
+  .hero-visual{position:relative; height:520px;}
+  .stage{
+    position:absolute; inset:0;
+    background:linear-gradient(160deg,#fff, var(--mist));
+    border-radius:32px;
+    border:1px solid var(--line);
+    box-shadow:var(--shadow-soft);
+    overflow:hidden;
+  }
+  .stage::before{
+    content:""; position:absolute; width:340px; height:340px; border-radius:50%;
+    background:radial-gradient(circle, rgba(201,182,255,.5), transparent 70%);
+    top:-60px; right:-60px;
+  }
+  .float-illustration{
+    position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center; gap:6%;
+    padding:40px 30px 30px;
+  }
+  .float-illustration svg{animation:bob 5s ease-in-out infinite;}
+  .float-illustration svg:nth-child(2){animation-delay:.5s;}
+  .float-illustration svg:nth-child(3){animation-delay:1s;}
+  @keyframes bob{
+    0%,100%{transform:translateY(0px);}
+    50%{transform:translateY(-14px);}
+  }
+
+  .phone-card{
+    position:absolute;
+    right:-6%; bottom:-10%;
+    width:230px;
+    background:#fff;
+    border-radius:34px;
+    border:8px solid var(--ink);
+    box-shadow:0 30px 60px -18px rgba(26,26,31,.4);
+    padding:18px 16px;
+    animation:phonein 1s var(--ease) .3s both;
+  }
+  @keyframes phonein{from{opacity:0; transform:translateY(30px) rotate(3deg);} to{opacity:1; transform:translateY(0) rotate(0);}}
+  .phone-status{display:flex; justify-content:space-between; font-size:9px; font-weight:600; margin-bottom:14px; color:var(--ink);}
+  .phone-brand{display:flex; align-items:center; gap:6px; margin-bottom:12px;}
+  .phone-brand .brand-mark{width:22px; height:22px; border-radius:6px;}
+  .phone-brand .brand-mark svg{width:12px; height:12px;}
+  .phone-brand span{font-weight:700; font-size:13px;}
+  .phone-card h4{font-size:14px; line-height:1.35; font-weight:700; margin-bottom:6px;}
+  .phone-card h4 .hl{color:var(--lavender-deep);}
+  .phone-card p{font-size:10.5px; color:var(--gray-ink); margin-bottom:12px; line-height:1.5;}
+  .phone-btn{
+    background:var(--ink); color:#fff; font-size:10.5px; font-weight:600;
+    padding:8px 14px; border-radius:100px; display:inline-block; margin-bottom:14px;
+  }
+  .phone-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
+  .phone-grid div{
+    aspect-ratio:1; background:var(--mist); border-radius:10px;
+    border:1px solid var(--line);
+  }
+
+  /* ---------- Marquee / trusted strip ---------- */
+  .strip{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:22px 0; overflow:hidden; background:#fff;
+  }
+  .strip-track{display:flex; gap:64px; width:max-content; animation:scroll 26s linear infinite;}
+  .strip-track span{font-size:14px; font-weight:600; color:var(--gray); letter-spacing:.03em; white-space:nowrap;}
+  @keyframes scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+
+  /* ---------- Section shared ---------- */
+  .section{padding:110px 0;}
+  .section-head{max-width:640px; margin-bottom:64px;}
+  .section-head.center{margin-left:auto; margin-right:auto; text-align:center;}
+  .kicker{
+    font-size:13px; font-weight:600; color:var(--lavender-deep);
+    text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px; display:block;
+  }
+  .section-head h2{
+    font-size:clamp(1.8rem, 3vw, 2.5rem); font-weight:700; letter-spacing:-0.02em; margin-bottom:16px; line-height:1.15;
+  }
+  .section-head p{font-size:16px; color:var(--gray-ink); line-height:1.65;}
+
+  /* ---------- How it works ---------- */
+  .steps{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative;
+  }
+  .step{
+    padding:0 20px; text-align:center; position:relative;
+  }
+  .step-icon{
+    width:76px; height:76px; border-radius:22px; margin:0 auto 22px;
+    background:#fff; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 14px 30px -18px rgba(26,26,31,.25);
+    transition:transform .4s var(--ease), box-shadow .4s var(--ease), background .4s var(--ease);
+  }
+  .step:hover .step-icon{transform:translateY(-8px) rotate(-4deg); background:var(--mist); box-shadow:0 20px 30px -14px rgba(169,139,255,.4);}
+  .step h4{font-size:16px; font-weight:700; margin-bottom:8px;}
+  .step p{font-size:13.5px; color:var(--gray-ink); line-height:1.55;}
+  .step-arrow{
+    position:absolute; top:36px; right:-8%;
+    color:var(--lavender-deep); font-size:20px;
+  }
+  .step:last-child .step-arrow{display:none;}
+
+  /* ---------- Feature split (Convention Hub) ---------- */
+  .feature-split{
+    display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
+  }
+  .feature-split.reverse .visual{order:2;}
+  .feature-split.reverse .copy{order:1;}
+  .feature-tag{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--mist); padding:6px 14px; border-radius:100px;
+    font-size:12.5px; font-weight:600; color:var(--ink); margin-bottom:20px;
+  }
+  .feature-split h3{font-size:clamp(1.5rem,2.4vw,2rem); font-weight:700; margin-bottom:16px; letter-spacing:-0.02em;}
+  .feature-split p.desc{font-size:15.5px; color:var(--gray-ink); line-height:1.7; margin-bottom:26px;}
+  .checklist{display:flex; flex-direction:column; gap:14px;}
+  .checklist li{display:flex; align-items:flex-start; gap:12px; font-size:14.5px; font-weight:500;}
+  .checklist .tick{
+    width:22px; height:22px; border-radius:50%; background:var(--lavender);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
+  }
+
+  .card-mock{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-soft); padding:30px; position:relative; overflow:hidden;
+  }
+  .card-mock::after{
+    content:""; position:absolute; width:220px; height:220px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,214,231,.6), transparent 70%);
+    bottom:-80px; left:-80px; z-index:0;
+  }
+  .card-mock > *{position:relative; z-index:1;}
+  .mock-title{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;}
+  .mock-title h5{font-size:15px; font-weight:700;}
+  .mock-title span{font-size:12px; color:var(--gray); background:var(--mist); padding:4px 10px; border-radius:100px;}
+  .mock-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0; border-top:1px solid var(--line); font-size:13.5px;
+  }
+  .mock-row:first-of-type{border-top:none;}
+  .mock-row b{font-weight:700;}
+  .mock-bar{width:100%; height:8px; background:var(--mist); border-radius:6px; overflow:hidden; margin-top:6px;}
+  .mock-bar i{display:block; height:100%; background:linear-gradient(90deg, var(--lavender-deep), var(--pink)); border-radius:6px;}
+
+  /* ---------- Marketplace grid ---------- */
+  .market-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:22px;}
+  .market-card{
+    background:#fff; border:1px solid var(--line); border-radius:20px; overflow:hidden;
+    transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+    cursor:pointer;
+  }
+  .market-card:hover{transform:translateY(-8px); box-shadow:0 24px 40px -20px rgba(26,26,31,.3);}
+  .market-thumb{
+    aspect-ratio:1/1.05; background:linear-gradient(155deg, var(--mist), var(--pink) 130%);
+    position:relative; overflow:hidden;
+  }
+  .market-thumb svg{position:absolute; inset:0; margin:auto; width:70%; transition:transform .5s var(--ease);}
+  .market-card:hover .market-thumb svg{transform:scale(1.08) translateY(-4px);}
+  .market-badge{
+    position:absolute; top:10px; left:10px; background:#fff; font-size:10.5px; font-weight:700;
+    padding:4px 10px; border-radius:100px; color:var(--ink);
+  }
+  .market-info{padding:16px 16px 18px;}
+  .market-info h5{font-size:14px; font-weight:700; margin-bottom:2px;}
+  .market-info span{font-size:12px; color:var(--gray-ink);}
+  .market-info .price{float:right; font-weight:700; font-size:13px; color:var(--ink);}
+
+  /* ---------- Community ---------- */
+  .community-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .creator-card{
+    background:#fff; border:1px solid var(--line); border-radius:22px; padding:26px;
+    display:flex; flex-direction:column; gap:16px;
+    transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+  }
+  .creator-card:hover{transform:translateY(-6px); box-shadow:0 22px 34px -20px rgba(26,26,31,.25);}
+  .creator-top{display:flex; align-items:center; gap:12px;}
+  .avatar{width:44px; height:44px; border-radius:50%; background:linear-gradient(140deg,var(--lavender),var(--pink));}
+  .creator-top div h6{font-size:14.5px; font-weight:700;}
+  .creator-top div span{font-size:12px; color:var(--gray-ink);}
+  .creator-card p{font-size:13.5px; color:var(--gray-ink); line-height:1.6;}
+  .creator-stats{display:flex; gap:18px; font-size:12px; color:var(--gray-ink); border-top:1px solid var(--line); padding-top:14px;}
+  .creator-stats b{color:var(--ink); font-weight:700;}
+
+  /* ---------- CTA banner ---------- */
+  .cta-banner{
+    display:grid; grid-template-columns:1fr 1fr;
+    border:1px solid var(--line); border-radius:32px; overflow:hidden;
+    box-shadow:var(--shadow-soft);
+  }
+  .cta-half{padding:56px 48px; display:flex; flex-direction:column; justify-content:center; gap:8px;}
+  .cta-half.dark{background:var(--ink); color:#fff;}
+  .cta-half.light{background:linear-gradient(135deg, var(--lavender) 0%, var(--pink) 100%); color:var(--ink);}
+  .cta-half h3{font-size:clamp(1.4rem,2.2vw,1.9rem); font-weight:700; letter-spacing:-0.02em; line-height:1.25;}
+  .cta-half .sub{opacity:.7; font-size:14px; margin-top:6px; margin-bottom:22px;}
+  .cta-half.light .sub{opacity:.75;}
+
+  /* ---------- Footer ---------- */
+  footer{background:#fff; border-top:1px solid var(--line); padding:70px 0 30px;}
+  .footer-top{display:grid; grid-template-columns:1.4fr repeat(3,1fr); gap:40px; margin-bottom:60px;}
+  .footer-brand p{font-size:14px; color:var(--gray-ink); margin-top:16px; max-width:260px; line-height:1.6;}
+  .footer-col h6{font-size:13px; font-weight:700; margin-bottom:16px; text-transform:uppercase; letter-spacing:.05em; color:var(--gray);}
+  .footer-col ul{display:flex; flex-direction:column; gap:12px;}
+  .footer-col a{font-size:14px; color:var(--ink); transition:color .25s;}
+  .footer-col a:hover{color:var(--lavender-deep);}
+  .footer-bottom{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    border-top:1px solid var(--line); padding-top:26px; font-size:13px; color:var(--gray);
+  }
+  .socials{display:flex; gap:14px;}
+  .socials a{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; transition:.3s var(--ease);
+  }
+  .socials a:hover{background:var(--ink); border-color:var(--ink); color:#fff; transform:translateY(-3px);}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:1080px){
+    .market-grid{grid-template-columns:repeat(2,1fr);}
+    .community-grid{grid-template-columns:repeat(1,1fr); max-width:480px; margin:0 auto;}
+    .footer-top{grid-template-columns:1fr 1fr; row-gap:36px;}
+  }
+
+  @media (max-width:940px){
+    .nav-links{display:none;}
+    .hamburger{display:flex;}
+    .hero-grid{grid-template-columns:1fr; gap:56px;}
+    .hero p.lead{max-width:100%;}
+    .hero-visual{height:420px; order:-1;}
+    .phone-card{width:190px; right:2%; bottom:-8%;}
+    .steps{grid-template-columns:repeat(2,1fr); row-gap:44px;}
+    .step-arrow{display:none;}
+    .feature-split{grid-template-columns:1fr; gap:40px;}
+    .feature-split.reverse .visual{order:1;}
+    .feature-split.reverse .copy{order:2;}
+    .cta-banner{grid-template-columns:1fr;}
+  }
+
+  @media (max-width:640px){
+    .wrap{padding:0 20px;}
+    nav{padding:16px 20px;}
+    .nav-actions .nav-login{display:none;}
+    .hero{padding:48px 0 40px;}
+    .hero-ctas{flex-direction:column; align-items:stretch;}
+    .hero-ctas .btn{justify-content:center;}
+    .trust-row{gap:20px;}
+    .section{padding:70px 0;}
+    .steps{grid-template-columns:1fr;}
+    .market-grid{grid-template-columns:repeat(2,1fr); gap:14px;}
+    .cta-half{padding:40px 26px;}
+    .footer-top{grid-template-columns:1fr;}
+    .hero-visual{height:360px;}
+    .phone-card{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header>
+  <nav>
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M9 6v13a2 2 0 0 0 2 2h2M6 12h5" stroke="#C9B6FF" stroke-width="2.3" stroke-linecap="round"/></svg>
+        <svg class="brand-spark" viewBox="0 0 24 24" fill="#C9B6FF"><path d="M12 0c.6 4.8 2.2 6.4 7 7-4.8.6-6.4 2.2-7 7-.6-4.8-2.2-6.4-7-7 4.8-.6 6.4-2.2 7-7z"/></svg>
+      </div>
+      <span class="brand-name">Tsukuru</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="#works">How It Works</a>
+      <a href="#hub">Convention Hub</a>
+      <a href="#explore">Explore</a>
+      <a href="#artists">For Artists</a>
+    </div>
+
+    <div class="nav-actions">
+      <a class="nav-login" href="#">Log in</a>
+      <a class="btn btn-primary btn-sm" href="#start"><span>Get Started</span></a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#works">How It Works</a>
+    <a href="#hub">Convention Hub</a>
+    <a href="#explore">Explore</a>
+    <a href="#artists">For Artists</a>
+    <a href="#">Log in</a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow" data-reveal><span class="dot">✦</span> Made for Artists. Loved by Fans.</div>
+      <h1 data-reveal>Turn your art into <span class="accent">collectibles</span> fans love.</h1>
+      <p class="lead" data-reveal>Tsukuru handles production, packaging, and worldwide shipping — so you can focus on what you do best: creating.</p>
+      <div class="hero-ctas" data-reveal>
+        <a class="btn btn-primary" id="start" href="#works"><span>Start Creating</span></a>
+        <a class="btn btn-ghost" href="#works"><span class="play-dot">▶</span> How It Works</a>
+      </div>
+      <div class="trust-row" data-reveal>
+        <div class="trust-item">
+          <div class="icon">🎨</div>
+          <span>Artist Friendly</span>
+        </div>
+        <div class="trust-item">
+          <div class="icon">✦</div>
+          <span>Premium Quality</span>
+        </div>
+        <div class="trust-item">
+          <div class="icon">🌐</div>
+          <span>Global Shipping</span>
+        </div>
+        <div class="trust-item">
+          <div class="icon">🔒</div>
+          <span>Secure & Easy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual" data-reveal>
+      <div class="stage">
+        <div class="float-illustration">
+          <!-- Original character: "Nova" — Tsukuru's brand mascot, acrylic stand -->
+          <svg width="128" height="208" viewBox="0 0 120 200">
+            <ellipse cx="60" cy="192" rx="42" ry="7" fill="#1A1A1F" opacity=".08"/>
+            <rect x="32" y="172" width="56" height="14" rx="4" fill="#fff" stroke="#ECEAF3"/>
+            <path d="M52 172 L52 154 L68 154 L68 172 Z" fill="#fff" stroke="#ECEAF3"/>
+            <path d="M28 60 C14 75 12 115 22 140 C28 150 40 148 38 134 C34 112 33 90 38 70 Z" fill="#7458E0"/>
+            <path d="M92 60 C106 75 108 115 98 140 C92 150 80 148 82 134 C86 112 87 90 82 70 Z" fill="#7458E0"/>
+            <path d="M40 96 C40 84 48 78 60 78 C72 78 80 84 80 96 L86 150 C86 156 80 160 60 160 C40 160 34 156 34 150 Z" fill="#F3EEFF" stroke="#1A1A1F" stroke-width="2"/>
+            <path d="M52 92 L60 100 L68 92 L60 86 Z" fill="#C9B6FF" stroke="#1A1A1F" stroke-width="1.5"/>
+            <rect x="54" y="78" width="12" height="10" fill="#FFE3D0"/>
+            <circle cx="60" cy="58" r="28" fill="#FFE3D0"/>
+            <path d="M32 58 C32 30 44 14 60 14 C76 14 88 30 88 58 C88 46 82 40 76 44 C70 36 64 34 60 36 C56 34 50 36 44 44 C38 40 32 46 32 58Z" fill="#8F6FFF"/>
+            <path d="M36 50 C42 38 52 32 60 33 C68 32 78 38 84 50 C82 56 76 52 70 56 C64 51 58 54 56 52 C52 55 46 52 40 55 C38 53 36 52 36 50Z" fill="#A98BFF"/>
+            <path d="M46 50 Q50 47 54 49" stroke="#5A4A99" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M66 49 Q70 47 74 50" stroke="#5A4A99" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <ellipse cx="50" cy="58" rx="5.5" ry="7" fill="#fff" stroke="#1A1A1F" stroke-width="1.4"/>
+            <ellipse cx="50" cy="59" rx="3.2" ry="4.4" fill="#6A4FCB"/>
+            <circle cx="48.5" cy="56.5" r="1.2" fill="#fff"/>
+            <ellipse cx="70" cy="58" rx="5.5" ry="7" fill="#fff" stroke="#1A1A1F" stroke-width="1.4"/>
+            <ellipse cx="70" cy="59" rx="3.2" ry="4.4" fill="#6A4FCB"/>
+            <circle cx="68.5" cy="56.5" r="1.2" fill="#fff"/>
+            <ellipse cx="45" cy="66" rx="4" ry="2.4" fill="#FFB6D0" opacity=".7"/>
+            <ellipse cx="75" cy="66" rx="4" ry="2.4" fill="#FFB6D0" opacity=".7"/>
+            <path d="M56 71 Q60 75 64 71" stroke="#1A1A1F" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M40 30 l2.4 5 5.4.6 -4 3.8 1 5.4 -4.8 -2.7 -4.8 2.7 1-5.4 -4-3.8 5.4-.6z" fill="#FFD65C" stroke="#1A1A1F" stroke-width="1"/>
+          </svg>
+          <!-- Nova — keychain version -->
+          <svg width="76" height="160" viewBox="0 0 70 150">
+            <circle cx="35" cy="16" r="12" fill="none" stroke="#1A1A1F" stroke-width="3"/>
+            <rect x="14" y="32" width="42" height="92" rx="10" fill="#F3EEFF" stroke="#1A1A1F" stroke-width="2"/>
+            <path d="M18 55 C12 65 12 90 18 100 C22 104 28 102 26 94 C24 82 24 68 27 58Z" fill="#7458E0"/>
+            <path d="M52 55 C58 65 58 90 52 100 C48 104 42 102 44 94 C46 82 46 68 43 58Z" fill="#7458E0"/>
+            <circle cx="35" cy="62" r="17" fill="#FFE3D0"/>
+            <path d="M19 62 C19 45 26 36 35 36 C44 36 51 45 51 62 C51 54 47 50 43 53 C39 48 35 47 35 48 C35 47 31 48 27 53 C23 50 19 54 19 62Z" fill="#8F6FFF"/>
+            <path d="M22 57 C26 50 31 47 35 47.5 C39 47 44 50 48 57 C46 60 42 58 39 60 C36 58 34 59 34 58.5 C33 59 31 58 28 60 C25 58 24 60 22 57Z" fill="#A98BFF"/>
+            <ellipse cx="30" cy="63" rx="3.4" ry="4.4" fill="#fff" stroke="#1A1A1F" stroke-width="1.1"/>
+            <ellipse cx="30" cy="63.6" rx="2" ry="2.8" fill="#6A4FCB"/>
+            <ellipse cx="40" cy="63" rx="3.4" ry="4.4" fill="#fff" stroke="#1A1A1F" stroke-width="1.1"/>
+            <ellipse cx="40" cy="63.6" rx="2" ry="2.8" fill="#6A4FCB"/>
+            <path d="M32 71 Q35 74 38 71" stroke="#1A1A1F" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="27" cy="68" rx="2.4" ry="1.5" fill="#FFB6D0" opacity=".7"/>
+            <ellipse cx="43" cy="68" rx="2.4" ry="1.5" fill="#FFB6D0" opacity=".7"/>
+            <path d="M24 20 l1.6 3.4 3.6.4 -2.6 2.6 0.6 3.6 -3.2-1.8 -3.2 1.8 0.6-3.6 -2.6-2.6 3.6-.4z" fill="#FFD65C" stroke="#1A1A1F" stroke-width=".8"/>
+          </svg>
+          <!-- Nova — badge version -->
+          <svg width="108" height="108" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" fill="#fff" stroke="#1A1A1F" stroke-width="3"/>
+            <circle cx="50" cy="50" r="38" fill="#F6F4FB"/>
+            <path d="M34 50 C28 58 28 72 34 80 C38 84 43 82 41 75 C39 66 39 58 41 52Z" fill="#7458E0"/>
+            <path d="M66 50 C72 58 72 72 66 80 C62 84 57 82 59 75 C61 66 61 58 59 52Z" fill="#7458E0"/>
+            <circle cx="50" cy="46" r="17" fill="#FFE3D0"/>
+            <path d="M33 46 C33 30 40 22 50 22 C60 22 67 30 67 46 C67 38 63 35 59 38 C55 33 51 32 50 33 C49 32 45 33 41 38 C37 35 33 38 33 46Z" fill="#8F6FFF"/>
+            <path d="M36 42 C40 35 45 32 50 32.5 C55 32 60 35 64 42 C62 45 58 43 55 45 C52 43 50 44 50 43.5 C49 44 47 43 44 45 C41 43 40 45 36 42Z" fill="#A98BFF"/>
+            <ellipse cx="44" cy="48" rx="3.4" ry="4.4" fill="#fff" stroke="#1A1A1F" stroke-width="1.1"/>
+            <ellipse cx="44" cy="48.6" rx="2" ry="2.8" fill="#6A4FCB"/>
+            <ellipse cx="56" cy="48" rx="3.4" ry="4.4" fill="#fff" stroke="#1A1A1F" stroke-width="1.1"/>
+            <ellipse cx="56" cy="48.6" rx="2" ry="2.8" fill="#6A4FCB"/>
+            <path d="M46 57 Q50 60 54 57" stroke="#1A1A1F" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="41" cy="53" rx="2.4" ry="1.5" fill="#FFB6D0" opacity=".7"/>
+            <ellipse cx="59" cy="53" rx="2.4" ry="1.5" fill="#FFB6D0" opacity=".7"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="phone-card">
+        <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+        <div class="phone-brand">
+          <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M9 6v13a2 2 0 0 0 2 2h2M6 12h5" stroke="#C9B6FF" stroke-width="2.3" stroke-linecap="round"/></svg></div>
+          <span>Tsukuru</span>
+        </div>
+        <h4>Made for Artists.<br><span class="hl">Loved by Fans.</span></h4>
+        <p>Create beautiful merch. We take care of the rest.</p>
+        <span class="phone-btn">Start Creating</span>
+        <div class="phone-grid"><div></div><div></div><div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STRIP ============ -->
+<div class="strip">
+  <div class="strip-track">
+    <span>ACRYLIC STANDS</span><span>KEYCHAINS</span><span>STICKERS</span><span>BADGES</span><span>ART PRINTS</span><span>CHARACTER CARDS</span>
+    <span>ACRYLIC STANDS</span><span>KEYCHAINS</span><span>STICKERS</span><span>BADGES</span><span>ART PRINTS</span><span>CHARACTER CARDS</span>
+  </div>
+</div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section" id="works">
+  <div class="wrap">
+    <div class="section-head center" data-reveal>
+      <span class="kicker">From Sketch to Shelf</span>
+      <h2>Four steps. One collection.</h2>
+      <p>No manufacturing knowledge, no complicated templates, no inventory headaches. Just create.</p>
+    </div>
+
+    <div class="steps" data-reveal>
+      <div class="step">
+        <div class="step-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4M5 16v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" stroke="#1A1A1F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h4>1. Upload</h4>
+        <p>Upload your artwork in seconds.</p>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="14" rx="2" stroke="#1A1A1F" stroke-width="1.8"/><path d="M4 9h16M9 19V9" stroke="#1A1A1F" stroke-width="1.8"/></svg>
+        </div>
+        <h4>2. Customize</h4>
+        <p>Choose products and customize details.</p>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" stroke="#1A1A1F" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="#1A1A1F" stroke-width="1.8"/></svg>
+        </div>
+        <h4>3. Preview</h4>
+        <p>See how your merch will look.</p>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M4 20V10l8-6 8 6v10a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1Z" stroke="#1A1A1F" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <h4>4. Launch</h4>
+        <p>Publish your collection and start selling.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONVENTION HUB (flagship) ============ -->
+<section class="section" id="hub" style="background:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <div class="feature-split">
+      <div class="copy" data-reveal>
+        <span class="feature-tag">✦ Flagship Feature</span>
+        <h3>Your convention assistant, built in.</h3>
+        <p class="desc">Enter your convention, booth size, and budget. Tsukuru recommends inventory quantities, a best-selling product mix, suggested pricing, and a full preparation checklist — so you walk into Artist Alley ready.</p>
+        <ul class="checklist">
+          <li><span class="tick">✓</span> Estimate production quantities automatically</li>
+          <li><span class="tick">✓</span> Generate inventory checklists per event</li>
+          <li><span class="tick">✓</span> Print QR codes and track booth sales live</li>
+        </ul>
+      </div>
+      <div class="visual" data-reveal>
+        <div class="card-mock">
+          <div class="mock-title"><h5>Anime Expo — Booth C14</h5><span>18 days left</span></div>
+          <div class="mock-row"><span>Acrylic Stands</span><b>120 units</b></div>
+          <div class="mock-row"><span>Keychains</span><b>200 units</b></div>
+          <div class="mock-row"><span>Stickers</span><b>340 units</b></div>
+          <div class="mock-row" style="flex-direction:column; align-items:flex-start;">
+            <span>Prep progress</span>
+            <div class="mock-bar"><i style="width:68%"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARKETPLACE ============ -->
+<section class="section" id="explore">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="kicker">Marketplace</span>
+      <h2>Discover creators, not just products.</h2>
+      <p>Browse by artist, character, trending collections, and limited drops from independent creators worldwide.</p>
+    </div>
+
+    <div class="market-grid" data-reveal>
+      <div class="market-card">
+        <div class="market-thumb">
+          <span class="market-badge">Trending</span>
+          <svg viewBox="0 0 100 130">
+            <!-- Original character: "Yuki" — winter theme -->
+            <path d="M28 46 C20 55 20 78 27 88 C31 92 38 90 36 82 C34 72 34 62 37 54Z" fill="#8FC4E0"/>
+            <path d="M72 46 C80 55 80 78 73 88 C69 92 62 90 64 82 C66 72 66 62 63 54Z" fill="#8FC4E0"/>
+            <path d="M35 78 C35 68 41 63 50 63 C59 63 65 68 65 78 L69 118 C69 123 60 126 50 126 C40 126 31 123 31 118Z" fill="#EAF6FB" stroke="#1A1A1F" stroke-width="2"/>
+            <circle cx="50" cy="46" r="22" fill="#FFE3D0"/>
+            <path d="M28 46 C28 26 37 14 50 14 C63 14 72 26 72 46 C72 36 67 32 62 35 C57 29 53 27 50 28 C47 27 43 29 38 35 C33 32 28 36 28 46Z" fill="#BFE3F5"/>
+            <path d="M31 40 C36 30 43 26 50 26.5 C57 26 64 30 69 40 C67 44 62 41 58 43 C54 40 52 41 50 40.5 C48 41 46 40 42 43 C38 41 33 44 31 40Z" fill="#D6EFF8"/>
+            <ellipse cx="42" cy="47" rx="4.2" ry="5.4" fill="#fff" stroke="#1A1A1F" stroke-width="1.2"/>
+            <ellipse cx="42" cy="47.8" rx="2.4" ry="3.4" fill="#4E8FB0"/>
+            <circle cx="40.8" cy="45.4" r="1" fill="#fff"/>
+            <ellipse cx="58" cy="47" rx="4.2" ry="5.4" fill="#fff" stroke="#1A1A1F" stroke-width="1.2"/>
+            <ellipse cx="58" cy="47.8" rx="2.4" ry="3.4" fill="#4E8FB0"/>
+            <circle cx="56.8" cy="45.4" r="1" fill="#fff"/>
+            <ellipse cx="37" cy="55" rx="3" ry="1.8" fill="#F5B8CE" opacity=".6"/>
+            <ellipse cx="63" cy="55" rx="3" ry="1.8" fill="#F5B8CE" opacity=".6"/>
+            <path d="M45 60 Q50 63 55 60" stroke="#1A1A1F" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            <g stroke="#fff" stroke-width="1.6" stroke-linecap="round">
+              <path d="M32 24 v7M28.5 27.5h7M29.5 25l5 5M34.5 25l-5 5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="market-info"><span class="price">฿450</span><h5>Yuki Stand</h5><span>by hanami_art</span></div>
+      </div>
+      <div class="market-card">
+        <div class="market-thumb" style="background:linear-gradient(155deg, var(--mist), var(--lavender) 130%);">
+          <span class="market-badge">New</span>
+          <svg viewBox="0 0 90 130">
+            <!-- Original character: "Aki" — autumn theme -->
+            <circle cx="45" cy="16" r="9" fill="none" stroke="#1A1A1F" stroke-width="2.6"/>
+            <rect x="20" y="26" width="50" height="86" rx="12" fill="#FCE2C8" stroke="#1A1A1F" stroke-width="2"/>
+            <path d="M27 46 C22 54 23 68 28 74 C31 77 36 75 34 69 C32 61 32 54 34 48Z" fill="#D9622E"/>
+            <path d="M63 46 C68 54 67 68 62 74 C59 77 54 75 56 69 C58 61 58 54 56 48Z" fill="#D9622E"/>
+            <circle cx="45" cy="58" r="19" fill="#FFE3D0"/>
+            <path d="M27 58 C27 42 34 34 45 34 C56 34 63 42 63 58 C62 50 57 51 55 48 C51 52 47 46 45 47 C43 46 39 52 35 48 C33 51 28 50 27 58Z" fill="#F2905A"/>
+            <ellipse cx="38" cy="59" rx="3.6" ry="4.6" fill="#fff" stroke="#1A1A1F" stroke-width="1.2"/>
+            <ellipse cx="38" cy="59.8" rx="2.1" ry="2.9" fill="#B04A1E"/>
+            <circle cx="36.8" cy="57.4" r="1" fill="#fff"/>
+            <ellipse cx="52" cy="59" rx="3.6" ry="4.6" fill="#fff" stroke="#1A1A1F" stroke-width="1.2"/>
+            <ellipse cx="52" cy="59.8" rx="2.1" ry="2.9" fill="#B04A1E"/>
+            <circle cx="50.8" cy="57.4" r="1" fill="#fff"/>
+            <ellipse cx="33.5" cy="66" rx="2.6" ry="1.6" fill="#F2905A" opacity=".5"/>
+            <ellipse cx="56.5" cy="66" rx="2.6" ry="1.6" fill="#F2905A" opacity=".5"/>
+            <path d="M40 71 Q45 74 50 71" stroke="#1A1A1F" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+            <path d="M52 33 C55 30 59 31 60 34 C61 31 65 31 66 34 C67 37 63 41 60 42 C57 41 51 37 52 33Z" fill="#E9743A" stroke="#1A1A1F" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="market-info"><span class="price">฿180</span><h5>Aki Keychain</h5><span>by studio_mono</span></div>
+      </div>
+      <div class="market-card">
+        <div class="market-thumb">
+          <span class="market-badge">Limited</span>
+          <svg viewBox="0 0 100 100">
+            <!-- Original character: "Riko" — moonlight theme -->
+            <circle cx="50" cy="50" r="42" fill="#fff" stroke="#1A1A1F" stroke-width="2"/>
+            <circle cx="50" cy="50" r="34" fill="#2E2A47"/>
+            <path d="M33 48 C27 58 28 74 34 82 C38 86 44 84 41 76 C38 66 38 58 40 51Z" fill="#332B52"/>
+            <path d="M67 48 C73 58 72 74 66 82 C62 86 56 84 59 76 C62 66 62 58 60 51Z" fill="#332B52"/>
+            <circle cx="50" cy="46" r="17" fill="#FFE3D0"/>
+            <path d="M33 46 C33 30 40 22 50 22 C60 22 67 30 67 46 C67 37 61 38 58 41 C55 34 51 33 50 34 C49 33 45 34 42 41 C39 38 33 37 33 46Z" fill="#4B4270"/>
+            <ellipse cx="44" cy="48" rx="3.6" ry="4.6" fill="#fff" stroke="#1A1A1F" stroke-width="1.1"/>
+            <ellipse cx="44" cy="48.8" rx="2" ry="2.9" fill="#E8C468"/>
+            <circle cx="42.8" cy="46.4" r="1" fill="#fff"/>
+            <ellipse cx="56" cy="48" rx="3.6" ry="4.6" fill="#fff" stroke="#1A1A1F" stroke-width="1.1"/>
+            <ellipse cx="56" cy="48.8" rx="2" ry="2.9" fill="#E8C468"/>
+            <circle cx="54.8" cy="46.4" r="1" fill="#fff"/>
+            <path d="M46 57 Q50 60 54 57" stroke="#1A1A1F" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+            <path d="M34 26 a3 3 0 1 0 3.2-4.8 A4 4 0 1 1 34 26Z" fill="#E8C468"/>
+            <path d="M64 30 l1.2 2.6 2.8.3 -2 2 0.5 2.8 -2.5-1.4 -2.5 1.4 0.5-2.8 -2-2 2.8-.3z" fill="#E8C468"/>
+          </svg>
+        </div>
+        <div class="market-info"><span class="price">฿90</span><h5>Moonlight Badge</h5><span>by riko.draws</span></div>
+      </div>
+      <div class="market-card">
+        <div class="market-thumb" style="background:linear-gradient(155deg, var(--mist), var(--pink) 130%);">
+          <span class="market-badge">Staff Pick</span>
+          <svg viewBox="0 0 100 130">
+            <!-- Original character: "Sakura" — flower theme -->
+            <rect x="15" y="15" width="70" height="98" rx="8" fill="#fff" stroke="#1A1A1F" stroke-width="2"/>
+            <path d="M32 68 C25 78 26 96 33 105 C37 109 44 107 41 99 C38 89 38 79 41 71Z" fill="#F587AC"/>
+            <path d="M68 68 C75 78 74 96 67 105 C63 109 56 107 59 99 C62 89 62 79 59 71Z" fill="#F587AC"/>
+            <circle cx="50" cy="68" r="21" fill="#FFE3D0"/>
+            <path d="M31 68 C31 51 39 42 50 42 C61 42 69 51 69 68 C68 59 63 60 60 57 C56 61 52 55 50 56 C48 55 44 61 40 57 C37 60 32 59 31 68Z" fill="#FFB6D0"/>
+            <ellipse cx="43" cy="69" rx="4" ry="5.2" fill="#fff" stroke="#1A1A1F" stroke-width="1.2"/>
+            <ellipse cx="43" cy="69.9" rx="2.3" ry="3.3" fill="#C75C86"/>
+            <circle cx="41.7" cy="67.3" r="1.1" fill="#fff"/>
+            <ellipse cx="57" cy="69" rx="4" ry="5.2" fill="#fff" stroke="#1A1A1F" stroke-width="1.2"/>
+            <ellipse cx="57" cy="69.9" rx="2.3" ry="3.3" fill="#C75C86"/>
+            <circle cx="55.7" cy="67.3" r="1.1" fill="#fff"/>
+            <ellipse cx="38" cy="77" rx="3" ry="1.8" fill="#F587AC" opacity=".5"/>
+            <ellipse cx="62" cy="77" rx="3" ry="1.8" fill="#F587AC" opacity=".5"/>
+            <path d="M45 82 Q50 85 55 82" stroke="#1A1A1F" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            <g>
+              <circle cx="38" cy="40" r="4.5" fill="#FFD6E7" stroke="#1A1A1F" stroke-width="0.8"/>
+              <circle cx="47" cy="36" r="4.5" fill="#FFD6E7" stroke="#1A1A1F" stroke-width="0.8"/>
+              <circle cx="56" cy="38" r="4.5" fill="#FFD6E7" stroke="#1A1A1F" stroke-width="0.8"/>
+              <circle cx="62" cy="45" r="4.5" fill="#FFD6E7" stroke="#1A1A1F" stroke-width="0.8"/>
+              <circle cx="47" cy="39.5" r="2.6" fill="#FFD65C"/>
+            </g>
+          </svg>
+        </div>
+        <div class="market-info"><span class="price">฿320</span><h5>Sakura Art Print</h5><span>by nokoart</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMMUNITY ============ -->
+<section class="section" id="artists" style="background:var(--mist);">
+  <div class="wrap">
+    <div class="section-head center" data-reveal>
+      <span class="kicker">Community</span>
+      <h2>Artists inspire artists.</h2>
+      <p>Follow creators, join monthly themes, and get featured in Creator Spotlights.</p>
+    </div>
+
+    <div class="community-grid" data-reveal>
+      <div class="creator-card">
+        <div class="creator-top"><div class="avatar"></div><div><h6>hanami_art</h6><span>Character Illustrator</span></div></div>
+        <p>"Tsukuru turned my sketchbook into an actual product line — I shipped my first 300 orders without touching a spreadsheet."</p>
+        <div class="creator-stats"><span><b>12.4k</b> followers</span><span><b>38</b> collections</span></div>
+      </div>
+      <div class="creator-card">
+        <div class="creator-top"><div class="avatar" style="background:linear-gradient(140deg,#FFD6E7,#C9B6FF);"></div><div><h6>studio_mono</h6><span>Doujin Creator</span></div></div>
+        <p>"The Convention Hub alone saved me from over-ordering stock three cons in a row. It just knows what sells."</p>
+        <div class="creator-stats"><span><b>8.1k</b> followers</span><span><b>21</b> collections</span></div>
+      </div>
+      <div class="creator-card">
+        <div class="creator-top"><div class="avatar" style="background:linear-gradient(140deg,#C9B6FF,#8E8E93);"></div><div><h6>riko.draws</h6><span>VTuber Illustrator</span></div></div>
+        <p>"I went from 100 followers to a real merch brand. Tsukuru made me feel like a professional from day one."</p>
+        <div class="creator-stats"><span><b>24.7k</b> followers</span><span><b>52</b> collections</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA BANNER ============ -->
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="cta-banner" data-reveal>
+      <div class="cta-half dark">
+        <h3>Catchy. Clean. Creative.<br>That's Tsukuru.</h3>
+        <p class="sub">A brand built for the way artists actually work.</p>
+      </div>
+      <div class="cta-half light">
+        <h3>Create with passion.<br>Launch with Tsukuru.</h3>
+        <a class="btn btn-dark-on-light" style="margin-top:18px; width:fit-content;" href="#start"><span>Start Creating →</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="brand">
+          <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M9 6v13a2 2 0 0 0 2 2h2M6 12h5" stroke="#C9B6FF" stroke-width="2.3" stroke-linecap="round"/></svg></div>
+          <span class="brand-name">Tsukuru</span>
+        </div>
+        <p>The operating system for Artist Alley creators. From sketch to shelf, everything happens inside Tsukuru.</p>
+      </div>
+      <div class="footer-col">
+        <h6>Product</h6>
+        <ul><li><a href="#">Creator Studio</a></li><li><a href="#">Marketplace</a></li><li><a href="#">Convention Hub</a></li><li><a href="#">Pricing</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h6>For Artists</h6>
+        <ul><li><a href="#">Start Creating</a></li><li><a href="#">Merch Catalog</a></li><li><a href="#">Success Stories</a></li><li><a href="#">Creator Guide</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h6>Company</h6>
+        <ul><li><a href="#">About</a></li><li><a href="#">Community</a></li><li><a href="#">Support</a></li><li><a href="#">Contact</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Tsukuru. All rights reserved.</span>
+      <div class="socials">
+        <a href="#">𝕏</a><a href="#">◎</a><a href="#">▶</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu toggle
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('active');
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('[data-reveal]');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el => io.observe(el));
+
+  // Close mobile menu on link click
+  document.querySelectorAll('.mobile-menu a').forEach(a=>{
+    a.addEventListener('click', ()=> mobileMenu.classList.remove('open'));
+  });
+</script>
+
+</body>
+</html>
